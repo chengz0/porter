@@ -1,0 +1,5 @@
+[general]
+
+[encoder_config]
+#config_file_path		encoder_config.txt
+config_file_path		../io/config/encoder_config.txt

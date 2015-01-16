@@ -1,0 +1,21 @@
+[general]
+
+
+[rgb_encoder]
+use_file_stream 	1	
+file_stream_url 	/libra/io/tmp_slice/
+use_network_stream 	1
+network_stream_url 	rtp://172.16.110.134:9002
+segment_time 		25
+segment_mode 		0
+gop_size 		25
+bit_rate 		400000
+width 			640
+height 			480
+fps 			25
+max_b_frames 		1
+desc 			IMBA.A2.S4
+show_debug_info		0
+camera_direction 	1
+shutdown_with_libra  1
+shutdown_frame  90
