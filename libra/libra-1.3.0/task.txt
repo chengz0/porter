@@ -1,6 +1,0 @@
-ls
-#############################################################
-load_configuration  ../io/dataset/scene/config.txt
-#Libra ../io/dataset/scene/test.oni
-Libra
-quit

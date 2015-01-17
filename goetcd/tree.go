@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type FileModel struct {
@@ -33,7 +34,7 @@ func ListModules(client *etcd.Client) error {
 	return err
 }
 
-func InitDirTree(client *etcd.Client, module, path string) {
+func InitDirTree4Module(client *etcd.Client, module, path string) {
 	files := make(map[string]*FileModel)
 	err := filepath.Walk(path, func(path string, curf os.FileInfo, err error) error {
 		if curf == nil {
@@ -64,4 +65,31 @@ func InitDirTree(client *etcd.Client, module, path string) {
 	if err != nil {
 		log.Printf("filepath.Walk() returned %v\n", err)
 	}
+}
+
+// add version
+func AddIterVersion(client *etcd.Client, module, version, role string) error {
+	key := fmt.Sprintf("/deepglint/%s/%s/%s", module, version, role)
+	value := fmt.Sprintf("192.168.2.103:5000/%s:%s-%s", module, version, role)
+	_, err := client.Create(key, value, 0)
+	return err
+}
+
+// pass to next phase
+func Pass2NextPhase(client *etcd.Client, module, from, to string) error {
+	fromkey := fmt.Sprintf("/deepglint/%s", module)
+	fromnode, err := client.Get(fromkey, true, false)
+	if err != nil {
+		return err
+	}
+
+	tmpkey := fromnode.Node.Nodes[fromnode.Node.Nodes.Len()-1].Key
+	tmpnode, err := client.Get(tmpkey+"/"+from, false, false)
+	if err != nil {
+		return err
+	}
+	tokey := tmpkey + "/" + to
+	tovalue := strings.TrimRight(tmpnode.Node.Value, from) + to
+	_, err = client.Create(tokey, tovalue, 0)
+	return err
 }

@@ -2,8 +2,10 @@ package util
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -13,6 +15,42 @@ type FileInfo struct {
 	Mode    os.FileMode
 	ModTime time.Time
 	IsDir   bool
+}
+
+// file exist
+func FileExist(path string) bool {
+	file, err := os.Stat(path)
+	if err != nil || file.IsDir() {
+		return false
+	}
+	return true
+}
+
+// read bytes from file
+func ReadBytesFromFile(file string) ([]byte, error) {
+	bs, err := ioutil.ReadFile(file)
+	if err != nil {
+		return []byte(""), err
+	}
+	return bs, nil
+}
+
+// read string from file
+func ReadStringFromFile(file string) (string, error) {
+	str, err := ReadBytesFromFile(file)
+	if err != nil {
+		return "", err
+	}
+	return string(str), nil
+}
+
+// read non empty string from file
+func ReadNoStringFromFile(file string) (string, error) {
+	str, err := ReadStringFromFile(file)
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimRight(str, "\r\t\n "), nil
 }
 
 // write back to file
